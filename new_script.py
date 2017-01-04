@@ -34,7 +34,7 @@ core0ReuseSamplePattern = re.compile(r'.*(system.l2.core0ReuseDis::sample).* ([0
 core1ReuseDisPattern = re.compile(r'.*(system.l2.core1ReussDis::)([0-9]+)\s+([0-9]+)')
 core1ReuseSamplePattern = re.compile(r'.*(system.l2.core1ReuseDis::sample).* ([0-9]+)')
 #l2Stack historgram Pattern
-l2StackHisPattern = re.compile(r'.*(system.l2.l2StackHis::).*([0-9]+)\s+([0-9]+)')
+l2StackHisPattern = re.compile(r'.*(system.l2.l2StackHis::)([0-9]+)\s+([0-9]+)')
 #l2 cachehits Pattern
 l2cachehitsPattern = re.compile(r'.*(system.l2.cachehits).*([0-9|\.]+)')
 #core memread pattern
@@ -249,7 +249,7 @@ while lines:
                         l2R.append(int(core0[j]+core1[j]))
                 assert len(l2R)==300, "l2R error"
                 for k in range(300):
-                    RDHWrite.write("%d" %l2R[k])
+                    RDHWrite.write("%d " %l2R[k])
                 for m in range(30):
                     SDHWrite.write("%d " %l2[m])
                 RDHWrite.write('\n')
