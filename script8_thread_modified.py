@@ -155,6 +155,7 @@ while tasklines:
                         ## the l2RD means the l2R dict , it used to get the changed reuse distance
                         ## the l2R means the changed and transed l2 reuse distance
                         ## the l2ES is the l2 expected stack disance distribution
+                        l2RD0 = {}
                         l2RD = {}
                         l2R = []
                         l2ES=[]
@@ -312,7 +313,7 @@ while tasklines:
                                     core0coe = float('%.2f'%temp0)
                                     core1coe = float('%.2f'%temp1)
                                     ## to comfirm the l2R's size
-                                    l2R = listget(max(int(300*(1+core0coe)),int(300*(1+core1coe))))
+                                    l2R = listget(max(int(300*(1+core0coe)),int(300*(1+core1coe)))+1)
                                     ## in this part ,we calc the L2RD,which is the reuse distance just addup
                                     ## notice that the core0coe is the cofficient of core0
                                     ## and the cofficient should be worked at the distance,
@@ -320,8 +321,8 @@ while tasklines:
                                     for i in range(300):
                                         pm1 = (i+1)*(1+core0coe)
                                         pm2 = (i+1)*(1+core1coe)
-                                        l2RD[pm1]=l2RD[pm1]+core0[i]
-                                        l2RD[pm2]=l2RD[pm2]+core1[i]
+                                        l2RD0[pm1] = core0[i]
+                                        l2RD[pm2] = core1[i]
                                 elif cpi1==0:
                                     l2R = listget(300)
                                     for j1 in range(300):
@@ -330,7 +331,14 @@ while tasklines:
                                     l2R = listget(300)
                                     for j2 in range(300):
                                         l2RD[j2+1]=core1[j2]
+                                ## merge the two dict
+                                for i in l2RD0.items():
+                                    if l2RD.has_key(i[0]):
+                                        l2RD[i[0]]=l2RD[i[0]]+i[1]
+                                    else:
+                                        l2RD[i[0]]=i[1]
                                 ## in this part we do the int trans for l2RD dict
+                                ## to l2R list , the index means the reuse distance, the val means the num of reuse distance
                                 for i in l2RD.items():
                                     temp = int(i[0])-1
                                     l2R[temp]=l2R[temp]+i[1]
@@ -338,6 +346,8 @@ while tasklines:
                                 for s1 in range(30):
                                     sdaddup[s1]=sdaddup[s1]+l2[s1]
                                 for s2 in range(len(l2R)):
+                                    if s2 >=2000:
+                                        break
                                     rdaddup[s2]=rdaddup[s2]+l2R[s2]
                                 ## write the
                                 for k in range(len(l2R)):
@@ -382,7 +392,7 @@ for i in range(len(rdaddup)):
     distance[pos] = distance[i]+((rdsum - listsum(i))/float(rdsum))
 ## adjust the l2 expect stack distance
 adjust = []
-adjust = listget(len(distance),adjust)
+adjust = listget(len(distance))
 for i in range(len(distance)):
     if(distance[i]>int(distance[i])+0.5):
         adjust[i]=distance[i]+1
@@ -406,7 +416,7 @@ for d1 in range(30):
     SD8Write.write("%d " %sdaddup[d1])
 SD8Write.write("%d " % sdhit)
 
-for d2 in len(esd):
+for d2 in range(len(esd)):
     RD8Write.write("%d " %esd[d2])
 RD8Write.write("%d "% esdhit)
 
