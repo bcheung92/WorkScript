@@ -93,7 +93,7 @@ def addlist(num,a):
 
 
 ### rdaddup means reuse distance addup , this list is the sum of reuse distance distribution
-rdaddup = listget(800)
+rdaddup = listget(2000)
 
 ### sdaddup means stack distance addup , this list is the sum of stack distance distribution
 sdaddup = listget(30)
@@ -320,8 +320,8 @@ while tasklines:
                                     for i in range(300):
                                         pm1 = (i+1)*(1+core0coe)
                                         pm2 = (i+1)*(1+core1coe)
-                                        l2RD[pm1]=core0[i]
-                                        l2RD[pm2]=core1[i]
+                                        l2RD[pm1]=l2RD[pm1]+core0[i]
+                                        l2RD[pm2]=l2RD[pm2]+core1[i]
                                 elif cpi1==0:
                                     l2R = listget(300)
                                     for j1 in range(300):
@@ -377,7 +377,7 @@ rdsum = sum(rdaddup)
 ##to trans the l2 reuse distance to the l2 expect stack distance
 for i in range(len(rdaddup)):
     pos = i+1
-    if(i==len(l2R)):
+    if(i==len(rdaddup)):
         break
     distance[pos] = distance[i]+((rdsum - listsum(i))/float(rdsum))
 ## adjust the l2 expect stack distance
