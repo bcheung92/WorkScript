@@ -92,7 +92,7 @@ def addlist(num,a):
     return a
 
 
-### rdaddup means reuse distance addup , this list is the sum of reuse distance distribution 
+### rdaddup means reuse distance addup , this list is the sum of reuse distance distribution
 rdaddup = listget(800)
 
 ### sdaddup means stack distance addup , this list is the sum of stack distance distribution
@@ -111,7 +111,7 @@ def check(a,b):
 ###
 ### func to get the former num a element summary
 ###
-def littsum(a,b):
+def listsum(a,b):
     ret = 0
     for i in range(a):
         ret =ret + b[i]
@@ -128,7 +128,7 @@ while tasklines:
                 # if equal means we alrady arrived
                 print threadnum
                 # this flag to denote we enter the thread info ,and we should collect the data
-                # when we the num equal ,we set it to false 
+                # when we the num equal ,we set it to false
                 # when we enter the thread we set it to true
                 # and when we collect the data finished, we used it to checn if to break or not
                 threadflag = False
@@ -153,7 +153,7 @@ while tasklines:
                         core1pos=1
                         l2pos = 1
                         ## the l2RD means the l2R dict , it used to get the changed reuse distance
-                        ## the l2R means the changed and transed l2 reuse distance 
+                        ## the l2R means the changed and transed l2 reuse distance
                         ## the l2ES is the l2 expected stack disance distribution
                         l2RD = {}
                         l2R = []
@@ -314,15 +314,12 @@ while tasklines:
                                     ## to comfirm the l2R's size
                                     l2R = listget(max(int(300*(1+core0coe)),int(300*(1+core1coe))))
                                     ## in this part ,we calc the L2RD,which is the reuse distance just addup
-                                    ## notice that the core0coe is the cofficient of core0 
+                                    ## notice that the core0coe is the cofficient of core0
                                     ## and the cofficient should be worked at the distance,
                                     ## it cannot be worked at the num of distance
-                                    for i in range(301):
-                                        ## skip when i==0
-                                        if i==0:
-                                            continue
-                                        pm1 = i*(1+core0coe)
-                                        pm2 = i*(1+core1coe)
+                                    for i in range(300):
+                                        pm1 = (i+1)*(1+core0coe)
+                                        pm2 = (i+1)*(1+core1coe)
                                         l2RD[pm1]=core0[i]
                                         l2RD[pm2]=core1[i]
                                 elif cpi1==0:
@@ -342,7 +339,7 @@ while tasklines:
                                     sdaddup[s1]=sdaddup[s1]+l2[s1]
                                 for s2 in range(len(l2R)):
                                     rdaddup[s2]=rdaddup[s2]+l2R[s2]
-                                ## write the 
+                                ## write the
                                 for k in range(len(l2R)):
                                     RDHWrite.write("%d " %l2R[k])
                                 for m in range(30):
@@ -377,13 +374,14 @@ while tasklines:
 distance = [1]
 distance = addlist(len(rdaddup),distance)
 rdsum = sum(rdaddup)
-##to trans the l2 reuse distance to the l2 expect stack distance 
+##to trans the l2 reuse distance to the l2 expect stack distance
 for i in range(len(rdaddup)):
     pos = i+1
     if(i==len(l2R)):
         break
-    distance[pos] = sd[i]+((rdsum - littsum(i))/float(rdsum))
-## adjust the l2 expect stack distance 
+    distance[pos] = distance[i]+((rdsum - listsum(i))/float(rdsum))
+## adjust the l2 expect stack distance
+adjust = []
 adjust = listget(len(distance),adjust)
 for i in range(len(distance)):
     if(distance[i]>int(distance[i])+0.5):
@@ -402,7 +400,7 @@ for i in range(len(adjust)):
     if adjust[i]<=8:
         num = num+1
 
-esdhit = littsum(num,rdaddup)
+esdhit = listsum(num,rdaddup)
 sdhit = listsum(8,sdaddup)
 for d1 in range(30):
     SD8Write.write("%d " %sdaddup[d1])
