@@ -389,7 +389,7 @@ for i in range(len(rdaddup)):
     pos = i+1
     if(i==len(rdaddup)):
         break
-    distance[pos] = distance[i]+((rdsum - listsum(i))/float(rdsum))
+    distance[pos] = distance[i]+((rdsum - listsum(i,rdaddup))/float(rdsum))
 ## adjust the l2 expect stack distance
 adjust = []
 adjust = listget(len(distance))
