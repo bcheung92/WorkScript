@@ -395,7 +395,7 @@ adjust = []
 adjust = listget(len(distance))
 for i in range(len(distance)):
     if(distance[i]>int(distance[i])+0.5):
-        adjust[i]=distance[i]+1
+        adjust[i]=int(distance[i])+1
     else:
         adjust[i]=int(distance[i])
 ## according to the adjust stack distance we set up the expect stack distance distribution
