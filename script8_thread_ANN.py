@@ -304,9 +304,10 @@ while tasklines:
                                     while dis2 > 0:
                                         l2.append(0)
                                         dis2 = dis2-1
-                                assert len(core0)==300, "core0 len error"
-                                assert len(core1)==300, "core1 len error"
-                                assert len(l2)==30,"l2 len error"
+                                print len(core0)
+                                #assert len(core0)==300, "core0 len error"
+                                #assert len(core1)==300, "core1 len error"
+                                #assert len(l2)==30,"l2 len error"
                                 ##
                                 ##this part is to calc the added up reuse distance distribution
                                 ##when the cpi0 and cpi1 are both exist we do the calc
@@ -374,22 +375,25 @@ while tasklines:
                                 #get the esd
                                 dthread = addlist(len(l2R),dthread)
                                 rsum = sum(l2R)
-                                for i in range(len(l2R)):
-                                    pos = i+1
-                                    if(i==len(l2R)):
-                                        break
-                                    dthread[pos] = dthread[i]+((rsum - listsum(i,l2R)))/float(rsum)
+                                if rsum!=0:
+                                    for i in range(len(l2R)):
+                                        pos = i+1
+                                        if(i==len(l2R)):
+                                            break
+                                        dthread[pos] = dthread[i]+((rsum - listsum(i,l2R)))/float(rsum)
 
-                                adthread = listget(len(dthread))
-                                for i in range(len(dthread)):
-                                    if (dthread[i] > int(dthread[i])+0.5):
-                                        adthread[i]=int(dthread[i])+1
-                                    else:
-                                        adthread[i]=int(dthread[i])
+                                    adthread = listget(len(dthread))
+                                    for i in range(len(dthread)):
+                                        if (dthread[i] > int(dthread[i])+0.5):
+                                            adthread[i]=int(dthread[i])+1
+                                        else:
+                                            adthread[i]=int(dthread[i])
 
-                                esdthread = listget(max(adthread))
-                                for i in range(len(l2R)):
-                                    esdthread[adthread[i]-1] = esdthread[adthread[i]-1]+l2R[i]
+                                    esdthread = listget(max(adthread))
+                                    for i in range(len(l2R)):
+                                        esdthread[adthread[i]-1] = esdthread[adthread[i]-1]+l2R[i]
+                                else:
+                                    esdthread = listget(30)
                                 # write the esd
                                 if(len(esdthread)>=30):
                                     for i in range(30):
