@@ -23,8 +23,9 @@ if os.path.isfile(inFilename):
     StackDH = name+"-stack-"+threadname+exten
     ADESD = name+"-adesd-"+threadname+exten
     ADSD = name+"-adsd-"+threadname+exten
+    ESD = name+"-esd-"+threadname+exten
 print "inFilename:", inFilename,inFile2name
-print "outFilename:", ReuseDH,StackDH,ADESD,ADSD
+print "outFilename:", ReuseDH,StackDH,ADESD,ADSD,ESD
 print "thread name:",threadname
 #the input file stats.txt
 fpRead = open(inFilename, "r")
@@ -35,8 +36,12 @@ RDHWrite = open(ReuseDH, "w+")
 #the output file Stack Distance Distribution
 SDHWrite = open(StackDH,"w+")
 
+#ADESD is the adduped expect stack distance
 ADESDWrite = open(ADESD,"w+")
+#ADSD is the adduped origin stack distance
 ADSDWrite = open(ADSD,"w+")
+#esd for each thread
+ESDWrite = open(ESD,"w+")
 #thread name pattern
 threadnamePattern = re.compile(r'.*(next_task=%s).*' % threadname)
 #core0ReuseDis pattern
@@ -159,10 +164,14 @@ while tasklines:
                         l2RD = {}
                         l2R = []
                         l2ES=[]
+                        dthread = [1]
+                        adthread = []
+                        esdthread = []
                         #this three pos is the pointer of the Distribution we are collecting
                         pos0=0
                         pos1=0
                         pos2=0
+                        stackhit = 0
                         threadlines = fpRead.readline()
                         threadendmatch = threadendPattern.match(threadlines)
                         while threadlines:
@@ -350,11 +359,54 @@ while tasklines:
                                         break
                                     rdaddup[s2]=rdaddup[s2]+l2R[s2]
                                 ## write the
-                                for k in range(len(l2R)):
-                                    RDHWrite.write("%d " %l2R[k])
+                                ## record 500 data of l2R
+                                if len(l2R) >=500:
+                                    for k in range(500):
+                                        RDHWrite.write("%d " %l2R[k])
+                                else:
+                                    for k in range(len(l2R)):
+                                        RDHWrite.write("%d " %l2R[k])
+                                    for i in range(500-len(l2R)):
+                                        RDHWrite.write("0 ")
+                                ##
+                                ##write the esd for each thread
+                                ##
+                                #get the esd
+                                dthread = addlist(len(l2R),dthread)
+                                rsum = sum(l2R)
+                                for i in range(len(l2R)):
+                                    pos = i+1
+                                    if(i==len(l2R)):
+                                        break
+                                    dthread[pos] = dthread[i]+((rsum - listsum(i,l2R)))/float(rsum)
+
+                                adthread = listget(len(dthread))
+                                for i in range(len(dthread)):
+                                    if (dthread[i] > int(dthread[i])+0.5):
+                                        adthread[i]=int(dthread[i])+1
+                                    else:
+                                        adthread[i]=int(dthread[i])
+
+                                esdthread = listget(max(adthread))
+                                for i in range(len(l2R)):
+                                    esdthread[adthread[i]-1] = esdthread[adthread[i]-1]+l2R[i]
+                                # write the esd
+                                if(len(esdthread)>=30):
+                                    for i in range(30):
+                                        ESDWrite("%d " % esdthread[i])
+                                else:
+                                    for i in range(len(esdthread)):
+                                        ESDWrite("%d " % esdthread[i])
+                                    for i in range(30-len(esdthread)):
+                                        ESDWrite("0 ")
+                                #write stack distance
                                 for m in range(30):
+                                    if m < 8:
+                                        stackhit=stackhit +l2[m]
                                     SDHWrite.write("%d " %l2[m])
+                                ESDWrite.write('\n')
                                 RDHWrite.write('\n')
+                                SDHWrite.write('%d '% stackhit)
                                 SDHWrite.write("\n")
                                 print "thread ",debug,"done"
                                 debug =debug +1
@@ -426,5 +478,5 @@ RDHWrite.close()
 SDHWrite.close()
 ADESDWrite.close()
 ADSDWrite.close()
-
+ESDWrite.close()
 
