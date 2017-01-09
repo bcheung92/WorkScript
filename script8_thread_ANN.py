@@ -393,12 +393,12 @@ while tasklines:
                                 # write the esd
                                 if(len(esdthread)>=30):
                                     for i in range(30):
-                                        ESDWrite("%d " % esdthread[i])
+                                        ESDWrite.write("%d " % esdthread[i])
                                 else:
                                     for i in range(len(esdthread)):
-                                        ESDWrite("%d " % esdthread[i])
+                                        ESDWrite.write("%d " % esdthread[i])
                                     for i in range(30-len(esdthread)):
-                                        ESDWrite("0 ")
+                                        ESDWrite.write("0 ")
                                 #write stack distance
                                 for m in range(30):
                                     if m < 8:
